@@ -7,7 +7,7 @@ on:
     branches: 
       [ master ]
     paths:
-    - 'src/MyDotnetApp/**'
+    - 'docker/**'
     - '.github/workflows/oteltestapp-AutoDeployTrigger-c54b0cda-2897-450e-9e9d-6124c7f87eb2.yml'
 
   # Allow manual trigger 
@@ -29,7 +29,8 @@ jobs:
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
-          appSourcePath: ${{ github.workspace }}/src/MyDotnetApp 
+          appSourcePath: ${{ github.workspace }}/src/MyDotnetApp
+          dockerfilePath: ./docker/dev.Dockerfile
           registryUrl: snehapark4apssacr.azurecr.io
           registryUsername: ${{ secrets.OTELTESTAPP_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.OTELTESTAPP_REGISTRY_PASSWORD }}
