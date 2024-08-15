@@ -11,11 +11,14 @@ on:
     - '.github/workflows/oteltestapp-AutoDeployTrigger-c54b0cda-2897-450e-9e9d-6124c7f87eb2.yml'
 
   # Allow manual trigger 
-  workflow_dispatch:
-      
+  workflow_dispatch:      
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
 
     steps:
       - name: Checkout to the branch
@@ -24,7 +27,9 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.OTELTESTAPP_AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.OTELTESTAPP_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.OTELTESTAPP_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.OTELTESTAPP_AZURE_SUBSCRIPTION_ID }}
 
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
@@ -37,8 +42,7 @@ jobs:
           containerAppName: oteltestapp
           resourceGroup: ca-snehapar-group
           imageToBuild: snehapark4apssacr.azurecr.io/oteltestapp:${{ github.sha }}
-          
-            
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
 
-     
 
