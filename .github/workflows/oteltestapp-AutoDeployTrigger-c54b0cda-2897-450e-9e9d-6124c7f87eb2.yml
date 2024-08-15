@@ -30,7 +30,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
-          dockerfilePath: ${{ github.workspace }}/docker/dev.Dockerfile
+          dockerfilePath: ./docker/dev.Dockerfile
           registryUrl: snehapark4apssacr.azurecr.io
           registryUsername: ${{ secrets.OTELTESTAPP_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.OTELTESTAPP_REGISTRY_PASSWORD }}
