@@ -1,0 +1,48 @@
+name: Trigger auto deployment for sourcecontrolapp-f0043a21
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/sourcecontrolapp-f0043a21-AutoDeployTrigger-db35c1e1-43f5-413f-9687-25bc2f36366e.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.SOURCECONTROLAPPF0043A21_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.SOURCECONTROLAPPF0043A21_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.SOURCECONTROLAPPF0043A21_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          registryUrl: snehapark4apssacr.azurecr.io
+          registryUsername: ${{ secrets.SOURCECONTROLAPPF0043A21_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.SOURCECONTROLAPPF0043A21_REGISTRY_PASSWORD }}
+          containerAppName: sourcecontrolapp-f0043a21
+          resourceGroup: EnvTest
+          imageToBuild: snehapark4apssacr.azurecr.io/sourcecontrolapp-f0043a21:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
